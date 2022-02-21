@@ -1,5 +1,5 @@
 # lazyEdge
-A warp on selenium.webdriver.Edge that free you from managing msedgedriver.
+A warp on ```selenium.webdriver.Edge``` that free you from managing msedgedriver.
 # install
 ```
 pip install lazyEdge
