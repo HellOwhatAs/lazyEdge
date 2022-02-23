@@ -12,16 +12,31 @@ def _getmsedgedriver():
         with open(os.path.join(_fp,"msedgedriver.py"),"wb") as f:
             f.write(z.read("msedgedriver.exe"))
 class lazyEdge(Edge):
-    def __init__(self,headless=False):
-        capabilities={"ms:edgeOptions":{'extensions': [],'args': ['--headless','--disable-gpu',]}} if headless else None
+    def __init__(self,headless=False,**kargs):
+        # capabilities={"ms:edgeOptions":{'extensions': [],'args': ['--headless','--disable-gpu',]}} if headless else None
+        if headless:
+            if "capabilities" in kargs:
+                if "ms:edgeOptions" in kargs["capabilities"]:
+                    if "args" in kargs["capabilities"]["ms:edgeOptions"]:
+                        kargs["capabilities"]["ms:edgeOptions"]["args"]=list(set(kargs["capabilities"]["ms:edgeOptions"]["args"]+['--headless','--disable-gpu',]))
+                    else:
+                        kargs["capabilities"]["ms:edgeOptions"]["args"]=['--headless','--disable-gpu',]
+                    if not "extensions" in kargs["capabilities"]["ms:edgeOptions"]:
+                        kargs["capabilities"]["ms:edgeOptions"]["extensions"]=[]
+                else:
+                    kargs["capabilities"]["ms:edgeOptions"]={'extensions': [],'args': ['--headless','--disable-gpu',]}
+            else:
+                kargs["capabilities"]={"ms:edgeOptions":{'extensions': [],'args': ['--headless','--disable-gpu',]}}
         try:
-            super(lazyEdge,self).__init__(os.path.join(_fp,"msedgedriver.py"),capabilities=capabilities)
+            super(lazyEdge,self).__init__(os.path.join(_fp,"msedgedriver.py"),**kargs)
         except:
             _getmsedgedriver()
-            super(lazyEdge,self).__init__(os.path.join(_fp,"msedgedriver.py"),capabilities=capabilities)
+            super(lazyEdge,self).__init__(os.path.join(_fp,"msedgedriver.py"),**kargs)
     def __del__(self):
-        self.quit()
-
+        try:
+            self.quit()
+        except:
+            pass
 if __name__=="__main__":
     a=lazyEdge()
     a.get("https://www.bilibili.com/")
