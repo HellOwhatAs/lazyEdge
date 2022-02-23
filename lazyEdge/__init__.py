@@ -1,12 +1,22 @@
 from io import BytesIO
 from bs4 import BeautifulSoup
 from selenium.webdriver import Edge
-import os,requests,zipfile
+import os,requests,zipfile,platform
 _fp=os.path.dirname(os.path.abspath(__file__))
 def _getmsedgedriver():
     resp=requests.get("https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/")
     soup=BeautifulSoup(resp.content,"lxml")
-    url=soup.select_one(".driver-download__meta").select_one("a")["href"]
+    urls=[i["href"] for i in soup.select_one(".driver-download__meta").select("a")]
+    pf=platform.architecture()
+    if "Windows" in pf[1]:
+        if "64" in pf[0]:
+            url=urls[1]
+        else:
+            url=urls[0]
+    elif "ELF" in pf[1]:
+        url=urls[3]
+    else:
+        url=urls[2]
     resp=requests.get(url)
     with zipfile.ZipFile(BytesIO(resp.content),"r")as z:
         with open(os.path.join(_fp,"msedgedriver.py"),"wb") as f:
