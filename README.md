@@ -1,3 +1,9 @@
+***
+
+<center><h1 style="color:red;"><b>WARNING: Works Only On Windows</b></h1></center>
+
+***
+
 # lazyEdge
 A warp on ```selenium.webdriver.Edge``` that free you from managing msedgedriver.
 # requires
