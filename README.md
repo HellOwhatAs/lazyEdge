@@ -1,6 +1,6 @@
 ***
 
-<center><div style="color:red;"><b>WARNING: Works Only On Windows</b></div></center>
+<center><div style="color:red;font-size:250%;"><b>WARNING: Works Only On Windows</b></div></center>
 
 ***
 
