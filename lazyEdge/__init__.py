@@ -1,7 +1,7 @@
 from io import BytesIO
 from bs4 import BeautifulSoup
 from selenium.webdriver import Edge
-import os,requests,zipfile,platform
+import os,requests,zipfile,platform,base64
 _fp=os.path.dirname(os.path.abspath(__file__))
 def _getmsedgedriver():
     resp=requests.get("https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/")
@@ -42,6 +42,22 @@ class lazyEdge(Edge):
         except:
             _getmsedgedriver()
             super(lazyEdge,self).__init__(os.path.join(_fp,"msedgedriver.py"),**kargs)
+    def img2bin(self,imgNode,return_Extension_Name=False):
+        s=self.execute_script("""
+        var canvas = document.createElement("canvas");  
+        var img=arguments[0];
+        canvas.width = img.width;  
+        canvas.height = img.height;  
+        var ctx = canvas.getContext("2d");  
+        ctx.drawImage(img, 0, 0, img.width, img.height);  
+        var ext = img.src.substring(img.src.lastIndexOf(".")+1).toLowerCase();  
+        var dataURL = canvas.toDataURL("image/"+ext);  
+        return dataURL;
+        """,imgNode)
+        if return_Extension_Name:
+            return s[s.find("/")+1:s.find(";")],base64.b64decode(s[s.find(",")+1:])
+        return base64.b64decode(s[s.find(",")+1:])
+
     def __del__(self):
         try:
             self.quit()
